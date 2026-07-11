@@ -11,7 +11,7 @@ const Footer = () => {
             <Image src="/images/logo.png" alt="Logo" width={155} height={47} />
           </Link>
         </div>
-        <div className="w-full lg:w-[30%] grid grid-cols-2 gap-1 lg:gap-4">
+        <div className="w-full lg:w-[30%] grid grid-cols-2 gap-0 lg:gap-4">
           <div>
             <h6 className="text-lg font-heading font-bold mb-4">Quick Links</h6>
             <div className="flex flex-col gap-2">

@@ -1,8 +1,28 @@
-import { packageNotes, packages } from "@/lib/data";
+"use client";
+
+import { packageNotes, packages, soundSetupPackages } from "@/lib/data";
 import Container from "../Container";
 import Button from "../Button";
+import { useState } from "react";
 
 const Rates = () => {
+  const [currentPackages, setCurrentPackages] = useState(packages);
+  const [packageType, setPackageType] = useState("dj-sound");
+  enum PackageType {
+    DJ_SOUND = "dj-sound",
+    SOUND_SETUP = "sound-setup",
+  }
+
+  const handlePackageChange = (packageType: string) => {
+    if (packageType === "dj-sound") {
+      setCurrentPackages(packages);
+      setPackageType(PackageType.DJ_SOUND);
+    } else if (packageType === "sound-setup") {
+      setCurrentPackages(soundSetupPackages);
+      setPackageType(PackageType.SOUND_SETUP);
+    }
+  };
+
   return (
     <section id="rates" className="py-32">
       <Container>
@@ -15,12 +35,26 @@ const Rates = () => {
             are not final, and are slightly negotiable.
           </p>
           <div className="flex items-center gap-4 h-16 bg-primary/40 rounded-full p-5 mt-4">
-            <Button>DJ + Sound Setup</Button>
-            <Button variant="tertiary">Sound Setup</Button>
+            <Button
+              onClick={() => handlePackageChange(PackageType.DJ_SOUND)}
+              variant={
+                packageType == PackageType.DJ_SOUND ? "primary" : "tertiary"
+              }
+            >
+              DJ + Sound Setup
+            </Button>
+            <Button
+              onClick={() => handlePackageChange(PackageType.SOUND_SETUP)}
+              variant={
+                packageType == PackageType.SOUND_SETUP ? "primary" : "tertiary"
+              }
+            >
+              Sound Setup
+            </Button>
           </div>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-          {packages.map((pack) => (
+          {currentPackages.map((pack) => (
             <div
               key={pack.id}
               className="flex flex-col items-start justify-start gap-4 border border-neutral-200 rounded-xl shadow p-5"

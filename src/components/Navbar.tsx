@@ -5,6 +5,7 @@ import Container from "./Container";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
+import Button from "./Button";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -48,11 +49,12 @@ const Navbar = () => {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="text-sm text-white"
+                  className="text-sm text-white hover:text-primary"
                 >
                   {link.name}
                 </Link>
               ))}
+              <Button href="#book">Book Now</Button>
             </nav>
 
             <button

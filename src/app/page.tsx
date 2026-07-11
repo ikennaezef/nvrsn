@@ -9,11 +9,16 @@ export default function Home() {
   return (
     <div className="flex flex-col font-sans">
       <Hero />
-      <About />
-      <Services />
-      <Testimonials />
-      <Rates />
-      <Book />
+      <div
+        style={{ backgroundImage: 'url("/images/bg.png")' }}
+        className="bg-no-repeat bg-cover"
+      >
+        <About />
+        <Services />
+        <Testimonials />
+        <Rates />
+        <Book />
+      </div>
     </div>
   );
 }

@@ -15,10 +15,10 @@ type ButtonProps = BaseProps & React.ButtonHTMLAttributes<HTMLButtonElement>;
 type AnchorProps = BaseProps & React.AnchorHTMLAttributes<HTMLAnchorElement>;
 
 const variants: Record<Variant, string> = {
-  primary: "bg-primary text-white hover:bg-[#8338e8]",
+  primary: "bg-primary text-white hover:opacity-50",
 
   secondary:
-    "border border-primary text-white bg-transparent hover:bg-[#9747FF]/10",
+    "border border-primary text-white bg-transparent hover:bg-[#9747FF]/60",
 
   tertiary: "bg-transparent text-white hover:bg-[#9747FF]/10",
 };

@@ -180,8 +180,78 @@ export const packages = [
   },
 ];
 
+export const soundSetupPackages = [
+  {
+    id: "compact",
+    name: "Tier 1: Compact System",
+    price: "₦200,000",
+    priceSuffix: "/ per day",
+    isCustomQuote: false,
+    description:
+      "Plug-and-play setup for intimate lounges, boutique pop-ups, or private rooms. (Up to 150 guests)",
+    features: [
+      "1 Pair of Top Speakers.",
+      "1 Pair of Single Subwoofers.",
+      "1 Single Speaker for DJ Feedback.",
+      "2 Pro Wireless Handheld Mics.",
+      "2 Crew Member (Mandatory).",
+    ],
+    cta: "Book Now",
+  },
+  {
+    id: "club",
+    name: "Tier 2: Club System",
+    price: "₦500,000",
+    priceSuffix: "/ per day",
+    isCustomQuote: false,
+    description:
+      "Full-range club acoustics with dedicated low-end bass reinforcement. (150 to 500 guests)",
+    features: [
+      "2 Pairs of Top Speakers.",
+      "2 Pairs of Double Cone Subwoofers.",
+      "1 Top Speaker DJ Feedback.",
+      "2 Pro Wireless Handheld Mics.",
+      "3 Crew Member (Mandatory).",
+    ],
+    cta: "Book Now",
+  },
+  {
+    id: "high-capacity",
+    name: "Tier 3: High-Capacity",
+    price: "₦700,000",
+    priceSuffix: "/ per day",
+    isCustomQuote: false,
+    description:
+      "High-SPL output for massive indoor halls or large community open grounds. (500 to 1,000 guests)",
+    features: [
+      "4 Pairs of Line Array Speakers.",
+      "1 Pair of Top Speakers.",
+      "3 Pairs of Double Cone Subwoofers.",
+      "1 Top Speaker for DJ Feedback.",
+      "1 Single Subwoofer for DJ Feedback.",
+      "2 Pro Wireless Handheld Mics.",
+      "4 Crew Member (Mandatory).",
+    ],
+    cta: "Book Now",
+  },
+  {
+    id: "arena",
+    name: "Tier 4: Arena & Festival",
+    price: "Custom Quote",
+    priceSuffix: "",
+    isCustomQuote: true,
+    description:
+      "Full-scale concert production, line-arrays, complex routing, and broad festival spaces.",
+    features: [
+      "Custom engineered based on specific technical riders, open-field dimensions, and structural rigging requirements. Includes Flying Line Arrays, dedicated FOH Digital Consoles, and multi-point monitor matrices.",
+    ],
+    cta: "Book Now",
+  },
+];
+
 export const SERVICE_TYPES: string[] = services.map((s) => s.title);
 export const PREFERRED_PACKAGES: string[] = packages.map((p) => p.name);
+export const SOUND_PACKAGES: string[] = soundSetupPackages.map((p) => p.name);
 
 export const packageNotes = [
   "Our package prices are not final, and are slightly negotiable.",

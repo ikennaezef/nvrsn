@@ -6,7 +6,7 @@ type ContainerProps = React.ComponentProps<"div"> & {
 
 const Container = ({ children, className, ...props }: ContainerProps) => {
   return (
-    <div className={`max-w-6xl mx-auto px-4 ${className ?? ""}`} {...props}>
+    <div className={`max-w-7xl mx-auto px-4 ${className ?? ""}`} {...props}>
       {children}
     </div>
   );

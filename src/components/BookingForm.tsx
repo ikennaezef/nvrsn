@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Calendar, ChevronDown, Check, Loader2 } from "lucide-react";
-import { SERVICE_TYPES, PREFERRED_PACKAGES } from "@/lib/data";
+import { SERVICE_TYPES, PREFERRED_PACKAGES, SOUND_PACKAGES } from "@/lib/data";
 import { buildWhatsAppUrl } from "@/lib/util";
 
 /* ------------------------------------------------------------------ */
@@ -41,6 +41,13 @@ type Errors = Partial<Record<keyof FormState, boolean>>;
 /* ------------------------------------------------------------------ */
 /* Data                                                                */
 /* ------------------------------------------------------------------ */
+
+// Which package list to show for a given service type.
+// Any service not listed here falls back to an empty list (placeholder only).
+const PACKAGES_BY_SERVICE: Record<string, string[]> = {
+  "Professional DJ Services": PREFERRED_PACKAGES,
+  "Sound System Setup": SOUND_PACKAGES,
+};
 
 // The two-column grid is driven entirely by this config.
 const GRID_FIELDS: FieldConfig[] = [
@@ -92,7 +99,7 @@ const GRID_FIELDS: FieldConfig[] = [
     type: "select",
     placeholder: "Select a service",
     required: true,
-    options: SERVICE_TYPES,
+    options: SERVICE_TYPES.slice(0, -1),
   },
   {
     name: "preferredPackage",
@@ -100,7 +107,7 @@ const GRID_FIELDS: FieldConfig[] = [
     type: "select",
     placeholder: "Select a package",
     required: true,
-    options: PREFERRED_PACKAGES,
+    // options are computed at render time based on serviceType — see below.
   },
 ];
 
@@ -137,6 +144,7 @@ type FieldProps = {
   options?: string[];
   rows?: number;
   className?: string;
+  disabled?: boolean;
 };
 
 function Field({
@@ -151,6 +159,7 @@ function Field({
   options = [],
   rows = 5,
   className = "",
+  disabled = false,
 }: FieldProps) {
   const base =
     "w-full rounded-xl border bg-white px-5 py-4 text-[15px] outline-none transition focus:ring-2 focus:ring-violet-100";
@@ -169,7 +178,8 @@ function Field({
               value={value}
               onChange={(e) => onChange(name, e.target.value)}
               required={required}
-              className={`${base} ${borderClass} appearance-none pr-12 ${value ? "text-gray-800" : "text-gray-400"}`}
+              disabled={disabled}
+              className={`${base} ${borderClass} appearance-none pr-12 ${value ? "text-gray-800" : "text-gray-400"} ${disabled ? "cursor-not-allowed bg-gray-50 opacity-60" : ""}`}
             >
               <option value="" disabled>
                 {placeholder}
@@ -260,33 +270,32 @@ function Field({
 /* ------------------------------------------------------------------ */
 /* Form                                                                */
 /* ------------------------------------------------------------------ */
-type BookingFormProps = {
-  /**
-   * Pass the package name when a "Book Now" button is clicked.
-   * `key` must change on every click so re-selecting the same package still applies.
-   */
-  preset?: { package: string; key: number };
-};
-
-export default function BookingForm({ preset }: BookingFormProps) {
+export default function BookingForm() {
   const [form, setForm] = useState<FormState>(initialState);
   const [errors, setErrors] = useState<Errors>({});
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  // Pre-select the package chosen from a pricing card.
-  useEffect(() => {
-    const pkg = preset?.package;
-    if (pkg && PREFERRED_PACKAGES.includes(pkg)) {
-      setForm((prev) => ({ ...prev, preferredPackage: pkg }));
-      setErrors((prev) => ({ ...prev, preferredPackage: false }));
-      setSubmitError("");
-    }
-  }, [preset?.package, preset?.key]);
+  // Packages depend on the chosen service type.
+  const packageOptions = PACKAGES_BY_SERVICE[form.serviceType] ?? [];
 
   const update = <K extends keyof FormState>(name: K, value: FormState[K]) => {
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => {
+      const next = { ...prev, [name]: value };
+
+      // When the service changes, clear the package if it no longer belongs
+      // to the new service's list.
+      if (name === "serviceType") {
+        const valid = PACKAGES_BY_SERVICE[value as string] ?? [];
+        if (!valid.includes(prev.preferredPackage)) {
+          next.preferredPackage = "";
+        }
+      }
+
+      return next;
+    });
+
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: false }));
     if (submitError) setSubmitError(""); // clear the banner once they start fixing things
   };
@@ -351,15 +360,28 @@ export default function BookingForm({ preset }: BookingFormProps) {
 
       {/* Two-column grid, driven by GRID_FIELDS */}
       <div className="grid grid-cols-1 gap-x-8 gap-y-7 md:grid-cols-2">
-        {GRID_FIELDS.map((field) => (
-          <Field
-            key={field.name}
-            {...field}
-            value={form[field.name]}
-            error={errors[field.name]}
-            onChange={update}
-          />
-        ))}
+        {GRID_FIELDS.map((field) => {
+          const isPackage = field.name === "preferredPackage";
+
+          return (
+            <Field
+              key={field.name}
+              {...field}
+              // Package options are derived from the selected service type.
+              options={isPackage ? packageOptions : field.options}
+              // Keep the package select locked until a service is chosen.
+              disabled={isPackage && !form.serviceType}
+              placeholder={
+                isPackage && !form.serviceType
+                  ? "Select a service type first"
+                  : field.placeholder
+              }
+              value={form[field.name]}
+              error={errors[field.name]}
+              onChange={update}
+            />
+          );
+        })}
       </div>
 
       {/* Full-width optional fields */}
@@ -395,7 +417,7 @@ export default function BookingForm({ preset }: BookingFormProps) {
             onClick={() => update("agreed", !form.agreed)}
             aria-pressed={form.agreed}
             aria-label="Agree to terms and conditions"
-            className={`mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded border-2 transition ${
+            className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition ${
               form.agreed
                 ? "border-violet-500 bg-violet-500"
                 : errors.agreed
@@ -409,15 +431,8 @@ export default function BookingForm({ preset }: BookingFormProps) {
           </button>
 
           <p className="text-[15px] text-gray-600">
-            I agree to the{" "}
-            <a
-              href="#"
-              className="text-violet-600 underline underline-offset-2 hover:text-violet-700"
-            >
-              Terms and Conditions
-            </a>{" "}
-            including the booking policy, cancellation terms, and payment
-            procedures.
+            I agree to the Terms and Conditions including the booking policy,
+            cancellation terms, and payment procedures.
           </p>
         </div>
       </div>

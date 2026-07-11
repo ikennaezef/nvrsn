@@ -56,7 +56,7 @@ const Hero = () => {
           </div>
         </Container>
       </div>
-      <div className="bg-primary-dark py-12">
+      {/* <div className="bg-primary-dark py-12">
         <Container className="flex items-center justify-between gap-6">
           <p className="text-white font-medium text-lg font-heading w-30">
             Brands That Trust Us:
@@ -70,6 +70,29 @@ const Hero = () => {
                 className="max-h-12 w-auto shrink"
               />
             ))}
+          </div>
+        </Container>
+      </div> */}
+      <div className="bg-primary-dark py-12">
+        <Container className="flex items-center gap-6">
+          <p className="text-white font-medium text-lg font-heading shrink-0">
+            Brands That Trust Us:
+          </p>
+
+          {/* Marquee viewport: hides overflow + fades the edges */}
+          <div className="relative flex-1 overflow-hidden mask-[linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+            <div className="flex w-max animate-marquee items-center gap-12 hover:[animation-play-state:paused]">
+              {/* Render the brands twice; aria-hidden on the copy for screen readers */}
+              {[...brands, ...brands].map((brand, i) => (
+                <img
+                  key={i}
+                  src={`/images/${brand}`}
+                  alt="Brand Logo"
+                  aria-hidden={i >= brands.length}
+                  className="max-h-12 w-auto shrink-0"
+                />
+              ))}
+            </div>
           </div>
         </Container>
       </div>
